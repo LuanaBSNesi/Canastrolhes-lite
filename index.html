@@ -1,0 +1,1258 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#123b2f">
+  <meta name="color-scheme" content="light">
+  <title>Canastrolhes Lite</title>
+  <style>
+    :root {
+      --green-950: #08271f;
+      --green-900: #0d3328;
+      --green-800: #124735;
+      --green-700: #176044;
+      --green-100: #dcece5;
+      --cream: #fbf7ec;
+      --paper: #fffdf7;
+      --ink: #17201c;
+      --muted: #5d6a64;
+      --gold: #f0bc4d;
+      --gold-dark: #805910;
+      --red: #b63838;
+      --red-dark: #852828;
+      --line: #d8ded9;
+      --shadow: 0 12px 32px rgba(4, 31, 23, .14);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; background: var(--green-950); }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 5%, rgba(240, 188, 77, .12), transparent 27rem),
+        linear-gradient(145deg, var(--green-900), var(--green-950));
+      font-family: Inter, ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select { font: inherit; }
+    button { touch-action: manipulation; }
+
+    .app-shell {
+      width: min(100%, 880px);
+      margin: 0 auto;
+      padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 4px 0 20px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 13px;
+      background: rgba(255,255,255,.1);
+      color: var(--gold);
+      font-size: 25px;
+      box-shadow: inset 0 1px rgba(255,255,255,.15);
+      transform: rotate(-4deg);
+    }
+
+    .brand h1 { margin: 0; font-size: clamp(1.55rem, 6vw, 2.15rem); letter-spacing: -.04em; }
+    .brand p { margin: 2px 0 0; color: #c7d9d1; font-size: .82rem; }
+
+    .panel {
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 24px;
+      background: var(--cream);
+      box-shadow: var(--shadow);
+    }
+
+    .section { padding: 22px 18px; }
+    .section + .section { border-top: 1px solid var(--line); }
+
+    .section-title {
+      margin: 0 0 4px;
+      color: var(--green-900);
+      font-size: 1.25rem;
+      letter-spacing: -.025em;
+    }
+
+    .section-help { margin: 0 0 22px; color: var(--muted); font-size: .92rem; line-height: 1.45; }
+
+    .form-grid { display: grid; gap: 17px; }
+    .field { display: grid; gap: 7px; }
+    .setup-actions { display: grid; gap: 10px; margin-top: 10px; }
+
+    label {
+      color: #25362e;
+      font-size: .9rem;
+      font-weight: 750;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 50px;
+      border: 1.5px solid #aebbb5;
+      border-radius: 12px;
+      outline: 0;
+      background: #fff;
+      color: var(--ink);
+      padding: 11px 13px;
+      transition: border-color .16s, box-shadow .16s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--green-700);
+      box-shadow: 0 0 0 4px rgba(23, 96, 68, .14);
+    }
+
+    input::placeholder { color: #8a9690; }
+
+    .input-error {
+      margin: 0;
+      color: var(--red-dark);
+      font-size: .82rem;
+      font-weight: 650;
+    }
+
+    [hidden] { display: none !important; }
+
+    .button {
+      display: inline-flex;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 18px;
+      cursor: pointer;
+      font-weight: 800;
+      line-height: 1.2;
+      transition: transform .08s, filter .16s, background .16s;
+    }
+
+    .button:active { transform: translateY(1px); }
+    .button:hover { filter: brightness(1.04); }
+    .button:focus-visible { outline: 3px solid rgba(240, 188, 77, .72); outline-offset: 2px; }
+    .button:disabled { cursor: not-allowed; filter: grayscale(.25); opacity: .52; }
+    .button-primary { width: 100%; background: var(--green-700); color: #fff; box-shadow: 0 5px 12px rgba(23,96,68,.18); }
+    .button-gold { width: 100%; background: var(--gold); color: #392707; }
+    .button-secondary { border: 1px solid #b7c0bb; background: #fff; color: var(--green-900); }
+    .button-danger { border: 1px solid #e0bcbc; background: #fff6f4; color: var(--red-dark); }
+    .button-small { min-height: 38px; padding: 8px 12px; border-radius: 10px; font-size: .84rem; }
+
+    .game-head {
+      padding: 18px;
+      background: linear-gradient(135deg, #133e30, #0d2e25);
+      color: #fff;
+    }
+
+    .game-head-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+    .eyebrow { margin: 0 0 4px; color: #b9d0c6; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .game-head h2 { margin: 0; font-size: 1.3rem; letter-spacing: -.02em; }
+    .meta-pill { flex: none; border: 1px solid rgba(240,188,77,.5); border-radius: 999px; padding: 6px 10px; background: rgba(240,188,77,.12); color: #ffe2a2; font-size: .8rem; font-weight: 800; }
+
+    .round-lead {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.14);
+      padding-top: 14px;
+      color: #e2eee9;
+      font-size: .88rem;
+    }
+
+    .round-badge { border-radius: 8px; background: rgba(255,255,255,.1); padding: 5px 8px; font-weight: 800; }
+    .leader { text-align: right; }
+
+    .score-grid { display: grid; gap: 12px; }
+
+    .score-card {
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+      border: 1px solid #d9dfda;
+      border-radius: var(--radius);
+      background: var(--paper);
+      padding: 17px;
+    }
+
+    .score-card::after {
+      content: attr(data-suit);
+      position: absolute;
+      right: -4px;
+      bottom: -19px;
+      color: rgba(23,96,68,.07);
+      font-family: Georgia, serif;
+      font-size: 92px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .team-name { overflow: hidden; margin: 0; color: var(--green-800); font-size: 1rem; text-overflow: ellipsis; white-space: nowrap; }
+    .team-score { position: relative; z-index: 1; margin: 8px 0 1px; color: var(--green-950); font-size: clamp(2.45rem, 12vw, 3.65rem); font-weight: 900; letter-spacing: -.06em; line-height: 1; }
+    .team-score.is-large { font-size: clamp(1.8rem, 9vw, 2.8rem); letter-spacing: -.04em; }
+    .team-score.is-extra-large { font-size: clamp(1.2rem, 5.5vw, 1.8rem); letter-spacing: -.025em; }
+    .remaining { position: relative; z-index: 1; margin: 0; color: var(--muted); font-size: .82rem; }
+    .remaining strong { color: var(--gold-dark); }
+
+    .round-form-grid { display: grid; gap: 14px; }
+    .team-input-label { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .form-actions { display: grid; gap: 10px; margin-top: 18px; }
+
+    .victory {
+      border: 1px solid #e2bd61;
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, #fff6cf, #ffefaa);
+      padding: 20px 17px;
+      color: #452f07;
+      text-align: center;
+      box-shadow: inset 0 1px rgba(255,255,255,.7);
+    }
+
+    .victory-icon { display: block; margin-bottom: 4px; font-size: 2rem; }
+    .victory h3 { margin: 0 0 6px; font-size: 1.4rem; }
+    .victory p { margin: 3px 0; }
+    .victory .final-score { margin: 10px 0 14px; font-size: 1.08rem; font-weight: 850; }
+    .victory-date { color: #684d19; font-size: .88rem; }
+    .victory-actions { display: grid; gap: 9px; margin-top: 17px; }
+    .result-reopen { text-align: center; }
+    .result-reopen p { margin: 0 0 11px; color: var(--muted); font-size: .9rem; }
+
+    .history-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+    .history-head .section-title { margin: 0; }
+    .history-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+    .history-tools .meta-pill { border-color: #d7aa43; background: #fff4d6; color: var(--gold-dark); }
+    .history-wrap { overflow-x: auto; }
+
+    .history-table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    .history-table th { background: #edf2ee; color: #34463d; text-align: right; }
+    .history-table th:first-child, .history-table td:first-child { text-align: center; }
+    .history-table th, .history-table td { border-bottom: 1px solid #dde3de; padding: 11px 8px; text-align: right; vertical-align: middle; }
+    .history-table tbody tr:last-child td { border-bottom: 0; }
+    .history-actions { display: flex; justify-content: flex-end; gap: 6px; }
+    .history-actions .button { padding-inline: 9px; }
+    .empty-history { margin: 0; border: 1px dashed #bec9c3; border-radius: 13px; padding: 22px 14px; color: var(--muted); text-align: center; }
+
+    .danger-zone { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; text-align: center; }
+    .danger-note { flex-basis: 100%; margin: 0; color: var(--muted); font-size: .78rem; }
+
+    dialog {
+      width: min(calc(100% - 32px), 440px);
+      border: 0;
+      border-radius: 20px;
+      background: var(--cream);
+      color: var(--ink);
+      padding: 0;
+      box-shadow: 0 25px 70px rgba(0,0,0,.35);
+    }
+
+    dialog::backdrop { background: rgba(3, 20, 15, .72); backdrop-filter: blur(2px); }
+    .dialog-body { padding: 22px 18px; }
+    .dialog-body h3 { margin: 0 0 5px; color: var(--green-900); }
+    .dialog-body > p { margin: 0 0 19px; color: var(--muted); font-size: .9rem; }
+    .dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 19px; }
+
+    #game-history-dialog { width: min(calc(100% - 24px), 650px); max-height: min(88vh, 760px); }
+    .archive-dialog-body { display: flex; max-height: min(88vh, 760px); flex-direction: column; padding: 0; }
+    .archive-dialog-head { flex: none; border-bottom: 1px solid var(--line); padding: 21px 18px 16px; }
+    .archive-dialog-head h3 { margin: 0 0 4px; color: var(--green-900); }
+    .archive-dialog-head p { margin: 0; color: var(--muted); font-size: .86rem; }
+    .archive-scroll { min-height: 0; overflow-y: auto; padding: 16px 18px; }
+    .archive-list { display: grid; gap: 12px; }
+    .archive-card { border: 1px solid #d6ddd8; border-radius: 15px; background: #fff; padding: 15px; }
+    .archive-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+    .archive-date { margin: 0 0 3px; color: var(--muted); font-size: .78rem; }
+    .archive-type { margin: 0; color: var(--green-900); font-size: 1.05rem; }
+    .archive-score { display: grid; gap: 5px; margin: 0 0 12px; }
+    .archive-score p { display: flex; justify-content: space-between; gap: 12px; margin: 0; font-size: .9rem; }
+    .archive-score strong:first-child { overflow-wrap: anywhere; text-align: left; }
+    .archive-score span { flex: none; font-weight: 800; }
+    .archive-details { display: grid; gap: 4px; border-top: 1px solid #e1e6e2; padding-top: 11px; color: #3f4e47; font-size: .83rem; }
+    .archive-details p { margin: 0; }
+    .archive-dialog-actions { display: grid; gap: 9px; flex: none; border-top: 1px solid var(--line); padding: 14px 18px 18px; background: var(--cream); }
+
+    .toast {
+      position: fixed;
+      z-index: 5;
+      left: 50%;
+      bottom: max(20px, env(safe-area-inset-bottom));
+      width: max-content;
+      max-width: calc(100% - 32px);
+      border-radius: 999px;
+      background: #111d18;
+      color: #fff;
+      padding: 11px 16px;
+      font-size: .88rem;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 8px 28px rgba(0,0,0,.3);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 16px);
+      transition: opacity .2s, transform .2s;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .footer { margin: 17px 0 0; color: #a9c0b6; font-size: .74rem; text-align: center; }
+
+    @media (min-width: 620px) {
+      .app-shell { padding-inline: 24px; }
+      .section { padding: 27px; }
+      .form-grid.two, .round-form-grid, .score-grid { grid-template-columns: 1fr 1fr; }
+      .form-actions { grid-template-columns: 1fr auto; align-items: stretch; }
+      .setup-actions { grid-template-columns: 1fr 1fr; }
+      .victory-actions { grid-template-columns: 1fr 1fr; }
+      .victory-actions .button:first-child { grid-column: 1 / -1; }
+      .archive-dialog-actions { grid-template-columns: 1fr 1fr; }
+      .button-primary, .button-gold { width: auto; }
+      .game-head { padding: 22px 27px; }
+    }
+
+    @media (max-width: 560px) {
+      .history-table thead { display: none; }
+      .history-table, .history-table tbody, .history-table tr, .history-table td { display: block; width: 100%; }
+      .history-table tr { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 12px; border: 1px solid #d9e0db; border-radius: 13px; background: #fff; padding: 12px; }
+      .history-table tr + tr { margin-top: 10px; }
+      .history-table td { display: flex; justify-content: space-between; gap: 8px; border: 0; padding: 2px 0; text-align: right; }
+      .history-table td::before { content: attr(data-label); color: var(--muted); font-weight: 650; text-align: left; }
+      .history-table td:first-child { grid-column: 1 / -1; border-bottom: 1px solid #e2e7e3; padding-bottom: 8px; text-align: right; }
+      .history-table td:last-child { grid-column: 1 / -1; border-top: 1px solid #e2e7e3; margin-top: 3px; padding-top: 9px; }
+      .history-actions { width: 100%; }
+      .history-actions .button { flex: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="brand">
+      <div class="brand-mark" aria-hidden="true">♣</div>
+      <div>
+        <h1>Canastrolhes Lite</h1>
+        <p>Placar simples para duas duplas</p>
+      </div>
+    </header>
+
+    <!-- Tela de configuração -->
+    <section id="setup-screen" class="panel" aria-labelledby="setup-title">
+      <div class="section">
+        <h2 id="setup-title" class="section-title">Configure a partida</h2>
+        <p class="section-help">Preencha os dados abaixo. O placar será salvo automaticamente neste aparelho.</p>
+
+        <form id="setup-form" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="game-type">Tipo de jogo</label>
+              <select id="game-type" name="gameType">
+                <option value="Canastra">Canastra</option>
+                <option value="Tranca">Tranca</option>
+                <option value="Buraco">Buraco</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+
+            <div id="custom-game-field" class="field" hidden>
+              <label for="custom-game">Nome do jogo</label>
+              <input id="custom-game" name="customGame" type="text" maxlength="40" autocomplete="off" placeholder="Ex.: Canastra italiana">
+              <p id="custom-game-error" class="input-error" hidden></p>
+            </div>
+
+            <div class="form-grid two">
+              <div class="field">
+                <label for="team-one">Nome da Dupla 1</label>
+                <input id="team-one" name="teamOne" type="text" maxlength="40" autocomplete="off" placeholder="Ex.: Ana e Paulo" required>
+                <p id="team-one-error" class="input-error" hidden></p>
+              </div>
+              <div class="field">
+                <label for="team-two">Nome da Dupla 2</label>
+                <input id="team-two" name="teamTwo" type="text" maxlength="40" autocomplete="off" placeholder="Ex.: Bia e Carlos" required>
+                <p id="team-two-error" class="input-error" hidden></p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="target-score">Pontuação necessária para vencer</label>
+              <input id="target-score" name="targetScore" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex.: 3000" required>
+              <p id="target-score-error" class="input-error" hidden></p>
+            </div>
+
+            <div class="setup-actions">
+              <button class="button button-primary" type="submit">Iniciar partida</button>
+              <button class="button button-secondary open-game-history" type="button">Histórico de Jogos</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tela principal da partida -->
+    <section id="game-screen" class="panel" aria-labelledby="game-title" hidden>
+      <header class="game-head">
+        <div class="game-head-top">
+          <div>
+            <p id="game-status-label" class="eyebrow">Partida em andamento</p>
+            <h2 id="game-title"></h2>
+          </div>
+          <div id="target-display" class="meta-pill"></div>
+        </div>
+        <div class="round-lead">
+          <span id="round-display" class="round-badge"></span>
+          <span id="leader-display" class="leader" aria-live="polite"></span>
+        </div>
+      </header>
+
+      <div class="section">
+        <div class="score-grid" aria-label="Placar acumulado">
+          <article class="score-card" data-suit="♣">
+            <h3 id="team-one-name" class="team-name"></h3>
+            <p id="team-one-score" class="team-score">0</p>
+            <p class="remaining"><strong id="team-one-remaining"></strong> para a meta</p>
+          </article>
+          <article class="score-card" data-suit="♦">
+            <h3 id="team-two-name" class="team-name"></h3>
+            <p id="team-two-score" class="team-score">0</p>
+            <p class="remaining"><strong id="team-two-remaining"></strong> para a meta</p>
+          </article>
+        </div>
+      </div>
+
+      <div id="victory-section" class="section" hidden>
+        <div class="victory" role="status" aria-live="polite">
+          <span class="victory-icon" aria-hidden="true">🏆</span>
+          <h3>Temos uma dupla vencedora!</h3>
+          <p>Parabéns, <strong id="winner-name"></strong>!</p>
+          <p id="final-score" class="final-score"></p>
+          <p id="final-date" class="victory-date"></p>
+          <p id="final-rounds"></p>
+          <div class="victory-actions">
+            <button id="save-to-game-history" class="button button-gold" type="button">Salvar no histórico</button>
+            <button id="finish-without-saving" class="button button-danger" type="button">Finalizar sem salvar</button>
+            <button id="continue-viewing" class="button button-secondary" type="button">Continuar visualizando o jogo</button>
+            <button id="new-game-winner" class="button button-primary" type="button" hidden>Nova partida</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="result-reopen-section" class="section result-reopen" hidden>
+        <p>Esta partida foi encerrada. O placar final permanece disponível.</p>
+        <button id="reopen-result" class="button button-secondary" type="button">Ver opções de encerramento</button>
+      </div>
+
+      <div id="round-entry-section" class="section">
+        <h3 class="section-title">Pontos da rodada</h3>
+        <p class="section-help">Informe os pontos das duas duplas, inclusive valores negativos ou zero.</p>
+        <form id="round-form" novalidate>
+          <div class="round-form-grid">
+            <div class="field">
+              <label id="round-one-label" class="team-input-label" for="round-one"></label>
+              <input id="round-one" type="number" step="1" placeholder="0" required>
+              <p id="round-one-error" class="input-error" hidden></p>
+            </div>
+            <div class="field">
+              <label id="round-two-label" class="team-input-label" for="round-two"></label>
+              <input id="round-two" type="number" step="1" placeholder="0" required>
+              <p id="round-two-error" class="input-error" hidden></p>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button id="finish-round" class="button button-primary" type="submit" disabled>Finalizar rodada</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="section">
+        <div class="history-head">
+          <h3 class="section-title">Histórico</h3>
+          <div class="history-tools">
+            <span id="round-count" class="meta-pill"></span>
+            <button id="undo-round" class="button button-secondary button-small" type="button" disabled>↶ Desfazer última</button>
+          </div>
+        </div>
+        <p id="empty-history" class="empty-history">As rodadas finalizadas aparecerão aqui.</p>
+        <div id="history-wrap" class="history-wrap" hidden>
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Rodada</th>
+                <th id="history-team-one"></th>
+                <th id="history-team-two"></th>
+                <th>Total 1</th>
+                <th>Total 2</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section danger-zone">
+        <button class="button button-secondary open-game-history" type="button">Histórico de Jogos</button>
+        <button id="clear-game" class="button button-danger" type="button">Apagar e iniciar novo jogo</button>
+        <p class="danger-note">Esta ação apaga somente a partida atual deste aparelho.</p>
+      </div>
+    </section>
+
+    <p class="footer">Seus dados ficam somente neste navegador.</p>
+  </main>
+
+  <!-- Edição de uma rodada existente -->
+  <dialog id="edit-dialog" aria-labelledby="edit-title">
+    <form id="edit-form" class="dialog-body" method="dialog" novalidate>
+      <h3 id="edit-title">Editar rodada</h3>
+      <p id="edit-subtitle"></p>
+      <div class="form-grid">
+        <div class="field">
+          <label id="edit-one-label" for="edit-one"></label>
+          <input id="edit-one" type="number" step="1" required>
+          <p id="edit-one-error" class="input-error" hidden></p>
+        </div>
+        <div class="field">
+          <label id="edit-two-label" for="edit-two"></label>
+          <input id="edit-two" type="number" step="1" required>
+          <p id="edit-two-error" class="input-error" hidden></p>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button id="cancel-edit" class="button button-secondary" type="button">Cancelar</button>
+        <button class="button button-primary" type="submit">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Histórico permanente de partidas encerradas -->
+  <dialog id="game-history-dialog" aria-labelledby="game-history-title">
+    <div class="archive-dialog-body">
+      <header class="archive-dialog-head">
+        <h3 id="game-history-title">Histórico de Jogos</h3>
+        <p>Partidas salvas neste navegador, da mais recente para a mais antiga.</p>
+      </header>
+      <div class="archive-scroll">
+        <p id="empty-game-history" class="empty-history">Nenhuma partida registrada.</p>
+        <div id="game-history-list" class="archive-list" hidden></div>
+      </div>
+      <div class="archive-dialog-actions">
+        <button id="clear-game-history" class="button button-danger" type="button" hidden>Apagar todo o histórico</button>
+        <button id="close-game-history" class="button button-secondary" type="button">Fechar histórico</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    'use strict';
+
+    // A partida atual e o histórico permanente usam chaves independentes.
+    const STORAGE_KEY = 'canastrolhes-lite-game-v1';
+    const HISTORY_KEY = 'canastrolhesGameHistory';
+    let game = null;
+    let editingRoundIndex = null;
+    let toastTimer = null;
+
+    const $ = (selector) => document.querySelector(selector);
+    const setupScreen = $('#setup-screen');
+    const gameScreen = $('#game-screen');
+    const setupForm = $('#setup-form');
+    const roundForm = $('#round-form');
+    const editDialog = $('#edit-dialog');
+    const gameHistoryDialog = $('#game-history-dialog');
+
+    function integerFrom(value, positiveOnly = false) {
+      const normalized = String(value).trim();
+      const pattern = positiveOnly ? /^[1-9]\d*$/ : /^-?\d+$/;
+      if (!pattern.test(normalized)) return null;
+      const number = Number(normalized);
+      return Number.isSafeInteger(number) ? number : null;
+    }
+
+    function formatNumber(value) {
+      return new Intl.NumberFormat('pt-BR').format(value);
+    }
+
+    function formatDateTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return 'Data e horário indisponíveis';
+      const datePart = new Intl.DateTimeFormat('pt-BR').format(date);
+      const timePart = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(date);
+      return datePart + ' às ' + timePart;
+    }
+
+    function createGameId() {
+      if (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') {
+        return globalThis.crypto.randomUUID();
+      }
+      return 'game-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 11);
+    }
+
+    function setError(inputId, message) {
+      const input = $('#' + inputId);
+      const error = $('#' + inputId + '-error');
+      input.setAttribute('aria-invalid', message ? 'true' : 'false');
+      if (message) {
+        error.textContent = message;
+        error.hidden = false;
+      } else {
+        error.textContent = '';
+        error.hidden = true;
+      }
+    }
+
+    function showToast(message) {
+      const toast = $('#toast');
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add('show');
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function totalsFor(rounds = game.rounds) {
+      return rounds.reduce((totals, round) => {
+        totals.one += round.one;
+        totals.two += round.two;
+        return totals;
+      }, { one: 0, two: 0 });
+    }
+
+    // A vitória é avaliada apenas com uma rodada completa já inserida no histórico.
+    function winnerFor(totals) {
+      const oneReached = totals.one >= game.target;
+      const twoReached = totals.two >= game.target;
+
+      if (!oneReached && !twoReached) return null;
+      if (oneReached && !twoReached) return 'one';
+      if (!oneReached && twoReached) return 'two';
+      if (totals.one > totals.two) return 'one';
+      if (totals.two > totals.one) return 'two';
+      return null;
+    }
+
+    function recalculate() {
+      const totals = totalsFor();
+      game.totals = totals;
+      game.winner = winnerFor(totals);
+      game.status = game.winner ? 'finished' : 'active';
+      if (game.winner && !game.endedAt) game.endedAt = new Date().toISOString();
+      if (!game.winner) {
+        game.endedAt = null;
+        game.resultDismissed = false;
+      }
+      return totals;
+    }
+
+    function saveGame() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(game));
+      } catch (error) {
+        showToast('Não foi possível salvar neste navegador.');
+      }
+    }
+
+    function normalizedHistoryRecord(record) {
+      if (!record || typeof record !== 'object') return null;
+      const textFields = ['id', 'gameType', 'endedAt', 'teamOne', 'teamTwo', 'winnerName'];
+      if (textFields.some((field) => typeof record[field] !== 'string' || !record[field].trim())) return null;
+      const numberFields = ['scoreOne', 'scoreTwo', 'rounds', 'target'];
+      if (numberFields.some((field) => !Number.isSafeInteger(record[field]))) return null;
+      if (record.rounds < 1 || record.target < 1 || Number.isNaN(new Date(record.endedAt).getTime())) return null;
+      return {
+        id: record.id.trim(),
+        gameType: record.gameType.trim(),
+        endedAt: record.endedAt,
+        teamOne: record.teamOne.trim(),
+        scoreOne: record.scoreOne,
+        teamTwo: record.teamTwo.trim(),
+        scoreTwo: record.scoreTwo,
+        winnerName: record.winnerName.trim(),
+        rounds: record.rounds,
+        target: record.target
+      };
+    }
+
+    function loadGameHistory() {
+      try {
+        const stored = localStorage.getItem(HISTORY_KEY);
+        if (!stored) return [];
+        const parsed = JSON.parse(stored);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map(normalizedHistoryRecord).filter(Boolean);
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function storeGameHistory(history) {
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        return true;
+      } catch (error) {
+        showToast('Não foi possível salvar o histórico neste navegador.');
+        return false;
+      }
+    }
+
+    function isGameInHistory(gameId) {
+      return Boolean(gameId) && loadGameHistory().some((record) => record.id === gameId);
+    }
+
+    function historyRecordFromCurrentGame() {
+      const winnerName = game.winner === 'one' ? game.teamOne : game.teamTwo;
+      return {
+        id: game.id,
+        gameType: game.gameType,
+        endedAt: game.endedAt,
+        teamOne: game.teamOne,
+        scoreOne: game.totals.one,
+        teamTwo: game.teamTwo,
+        scoreTwo: game.totals.two,
+        winnerName,
+        rounds: game.rounds.length,
+        target: game.target
+      };
+    }
+
+    function saveCurrentGameToHistory() {
+      if (!game || !game.winner) return;
+      const history = loadGameHistory();
+      const alreadySaved = history.some((record) => record.id === game.id);
+      if (!alreadySaved) {
+        history.push(historyRecordFromCurrentGame());
+        if (!storeGameHistory(history)) return;
+      }
+      game.historySaved = true;
+      saveGame();
+      renderVictory(game.totals);
+      showToast('Partida salva no histórico');
+    }
+
+    function isValidStoredGame(data) {
+      if (!data || typeof data !== 'object') return false;
+      if (typeof data.gameType !== 'string' || !data.gameType.trim()) return false;
+      if (typeof data.teamOne !== 'string' || !data.teamOne.trim()) return false;
+      if (typeof data.teamTwo !== 'string' || !data.teamTwo.trim()) return false;
+      if (!Number.isSafeInteger(data.target) || data.target <= 0) return false;
+      if (!Array.isArray(data.rounds)) return false;
+      let totalOne = 0;
+      let totalTwo = 0;
+      return data.rounds.every((round) => {
+        if (!round || !Number.isSafeInteger(round.one) || !Number.isSafeInteger(round.two)) return false;
+        totalOne += round.one;
+        totalTwo += round.two;
+        return Number.isSafeInteger(totalOne) && Number.isSafeInteger(totalTwo);
+      });
+    }
+
+    function restoreGame() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) return false;
+        const parsed = JSON.parse(stored);
+        if (!isValidStoredGame(parsed)) throw new Error('Dados inválidos');
+        game = {
+          id: typeof parsed.id === 'string' && parsed.id.trim() ? parsed.id.trim() : createGameId(),
+          gameType: parsed.gameType.trim(),
+          teamOne: parsed.teamOne.trim(),
+          teamTwo: parsed.teamTwo.trim(),
+          target: parsed.target,
+          rounds: parsed.rounds.map((round) => ({ one: round.one, two: round.two })),
+          totals: { one: 0, two: 0 },
+          winner: null,
+          status: 'active',
+          endedAt: typeof parsed.endedAt === 'string' && !Number.isNaN(new Date(parsed.endedAt).getTime()) ? parsed.endedAt : null,
+          resultDismissed: parsed.resultDismissed === true,
+          historySaved: parsed.historySaved === true
+        };
+        recalculate();
+        if (isGameInHistory(game.id)) game.historySaved = true;
+        saveGame();
+        return true;
+      } catch (error) {
+        try { localStorage.removeItem(STORAGE_KEY); } catch (storageError) { /* Armazenamento indisponível. */ }
+        return false;
+      }
+    }
+
+    function currentGameType() {
+      return $('#game-type').value === 'Outro' ? $('#custom-game').value.trim() : $('#game-type').value;
+    }
+
+    function validateSetup() {
+      const teamOne = $('#team-one').value.trim();
+      const teamTwo = $('#team-two').value.trim();
+      const target = integerFrom($('#target-score').value, true);
+      const customNeeded = $('#game-type').value === 'Outro';
+      const customGame = $('#custom-game').value.trim();
+      let valid = true;
+
+      setError('team-one', teamOne ? '' : 'Informe o nome da Dupla 1.');
+      setError('team-two', teamTwo ? '' : 'Informe o nome da Dupla 2.');
+      setError('target-score', target === null ? 'Informe um número inteiro maior que zero.' : '');
+      setError('custom-game', customNeeded && !customGame ? 'Informe o nome do jogo.' : '');
+
+      if (!teamOne || !teamTwo || target === null || (customNeeded && !customGame)) valid = false;
+      return valid ? { teamOne, teamTwo, target, gameType: currentGameType() } : null;
+    }
+
+    function validateRoundInputs(firstId, secondId) {
+      const one = integerFrom($('#' + firstId).value);
+      const two = integerFrom($('#' + secondId).value);
+      const oneMessage = one === null ? 'Informe um número inteiro.' : '';
+      const twoMessage = two === null ? 'Informe um número inteiro.' : '';
+      setError(firstId, oneMessage);
+      setError(secondId, twoMessage);
+      return one === null || two === null ? null : { one, two };
+    }
+
+    function validateSafeRoundTotals(values, firstId, secondId, excludedIndex = null) {
+      const baseTotals = game.rounds.reduce((totals, round, index) => {
+        if (index !== excludedIndex) {
+          totals.one += round.one;
+          totals.two += round.two;
+        }
+        return totals;
+      }, { one: 0, two: 0 });
+      const oneIsSafe = Number.isSafeInteger(baseTotals.one + values.one);
+      const twoIsSafe = Number.isSafeInteger(baseTotals.two + values.two);
+      setError(firstId, oneIsSafe ? '' : 'O total desta dupla ultrapassa o limite suportado.');
+      setError(secondId, twoIsSafe ? '' : 'O total desta dupla ultrapassa o limite suportado.');
+      return oneIsSafe && twoIsSafe;
+    }
+
+    function resetRoundFields() {
+      $('#round-one').value = '';
+      $('#round-two').value = '';
+      setError('round-one', '');
+      setError('round-two', '');
+      updateFinishButton();
+      $('#round-one').focus();
+    }
+
+    function updateFinishButton() {
+      const bothFilled = $('#round-one').value.trim() !== '' && $('#round-two').value.trim() !== '';
+      $('#finish-round').disabled = !bothFilled;
+    }
+
+    function renderHeader(totals) {
+      $('#game-title').textContent = game.gameType;
+      $('#game-status-label').textContent = game.winner ? 'Partida encerrada' : 'Partida em andamento';
+      $('#target-display').textContent = 'Meta: ' + formatNumber(game.target);
+      $('#round-display').textContent = game.winner
+        ? 'Finalizada · ' + game.rounds.length + (game.rounds.length === 1 ? ' rodada' : ' rodadas')
+        : 'Rodada ' + (game.rounds.length + 1);
+
+      let leaderText = 'Empate no momento';
+      if (totals.one > totals.two) leaderText = game.teamOne + ' está na frente';
+      if (totals.two > totals.one) leaderText = game.teamTwo + ' está na frente';
+      $('#leader-display').textContent = leaderText;
+    }
+
+    function renderScores(totals) {
+      const formattedOne = formatNumber(totals.one);
+      const formattedTwo = formatNumber(totals.two);
+      $('#team-one-name').textContent = game.teamOne;
+      $('#team-two-name').textContent = game.teamTwo;
+      [['#team-one-score', formattedOne], ['#team-two-score', formattedTwo]].forEach(([selector, value]) => {
+        const scoreElement = $(selector);
+        scoreElement.textContent = value;
+        scoreElement.classList.toggle('is-large', value.length >= 12 && value.length < 18);
+        scoreElement.classList.toggle('is-extra-large', value.length >= 18);
+      });
+      $('#team-one-remaining').textContent = formatNumber(Math.max(0, game.target - totals.one));
+      $('#team-two-remaining').textContent = formatNumber(Math.max(0, game.target - totals.two));
+      $('#round-one-label').textContent = game.teamOne;
+      $('#round-two-label').textContent = game.teamTwo;
+      $('#history-team-one').textContent = game.teamOne;
+      $('#history-team-two').textContent = game.teamTwo;
+    }
+
+    function renderVictory(totals) {
+      const victorySection = $('#victory-section');
+      const resultReopenSection = $('#result-reopen-section');
+      const roundEntry = $('#round-entry-section');
+      const won = Boolean(game.winner);
+      const dismissed = won && game.resultDismissed === true;
+      const saved = won && (game.historySaved === true || isGameInHistory(game.id));
+      victorySection.hidden = !won || dismissed;
+      resultReopenSection.hidden = !dismissed;
+      roundEntry.hidden = won;
+
+      if (won) {
+        $('#winner-name').textContent = game.winner === 'one' ? game.teamOne : game.teamTwo;
+        $('#final-score').textContent = game.teamOne + ' ' + formatNumber(totals.one) + ' × ' + formatNumber(totals.two) + ' ' + game.teamTwo;
+        $('#final-date').textContent = 'Encerrada em ' + formatDateTime(game.endedAt);
+        $('#final-rounds').textContent = game.rounds.length === 1 ? '1 rodada disputada' : game.rounds.length + ' rodadas disputadas';
+        $('#save-to-game-history').textContent = saved ? 'Partida salva' : 'Salvar no histórico';
+        $('#save-to-game-history').disabled = saved;
+        $('#finish-without-saving').hidden = saved;
+        $('#new-game-winner').hidden = !saved;
+      }
+    }
+
+    function renderHistory() {
+      const tbody = $('#history-body');
+      const hasRounds = game.rounds.length > 0;
+      $('#empty-history').hidden = hasRounds;
+      $('#history-wrap').hidden = !hasRounds;
+      $('#undo-round').disabled = !hasRounds;
+      $('#round-count').textContent = game.rounds.length + (game.rounds.length === 1 ? ' rodada' : ' rodadas');
+      tbody.replaceChildren();
+
+      let totalOne = 0;
+      let totalTwo = 0;
+
+      game.rounds.forEach((round, index) => {
+        totalOne += round.one;
+        totalTwo += round.two;
+        const row = document.createElement('tr');
+        const values = [
+          ['Rodada', String(index + 1)],
+          [game.teamOne, formatNumber(round.one)],
+          [game.teamTwo, formatNumber(round.two)],
+          ['Total ' + game.teamOne, formatNumber(totalOne)],
+          ['Total ' + game.teamTwo, formatNumber(totalTwo)]
+        ];
+
+        values.forEach(([label, value]) => {
+          const cell = document.createElement('td');
+          cell.dataset.label = label;
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+
+        const actionCell = document.createElement('td');
+        actionCell.dataset.label = 'Ações';
+        const actions = document.createElement('div');
+        actions.className = 'history-actions';
+
+        const editButton = document.createElement('button');
+        editButton.type = 'button';
+        editButton.className = 'button button-secondary button-small';
+        editButton.textContent = 'Editar';
+        editButton.dataset.action = 'edit';
+        editButton.dataset.index = index;
+        editButton.setAttribute('aria-label', 'Editar rodada ' + (index + 1));
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'button button-danger button-small';
+        deleteButton.textContent = 'Excluir';
+        deleteButton.dataset.action = 'delete';
+        deleteButton.dataset.index = index;
+        deleteButton.setAttribute('aria-label', 'Excluir rodada ' + (index + 1));
+
+        actions.append(editButton, deleteButton);
+        actionCell.appendChild(actions);
+        row.appendChild(actionCell);
+        tbody.appendChild(row);
+      });
+    }
+
+    function renderGameHistory() {
+      const list = $('#game-history-list');
+      const history = loadGameHistory().sort((a, b) => new Date(b.endedAt) - new Date(a.endedAt));
+      const hasRecords = history.length > 0;
+      $('#empty-game-history').hidden = hasRecords;
+      $('#clear-game-history').hidden = !hasRecords;
+      list.hidden = !hasRecords;
+      list.replaceChildren();
+
+      history.forEach((record) => {
+        const card = document.createElement('article');
+        card.className = 'archive-card';
+
+        const head = document.createElement('div');
+        head.className = 'archive-card-head';
+        const titleGroup = document.createElement('div');
+        const date = document.createElement('p');
+        date.className = 'archive-date';
+        date.textContent = formatDateTime(record.endedAt);
+        const title = document.createElement('h4');
+        title.className = 'archive-type';
+        title.textContent = record.gameType;
+        titleGroup.append(date, title);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'button button-danger button-small';
+        deleteButton.textContent = 'Excluir';
+        deleteButton.dataset.historyId = record.id;
+        deleteButton.setAttribute('aria-label', 'Excluir partida de ' + record.gameType + ' encerrada em ' + formatDateTime(record.endedAt));
+        head.append(titleGroup, deleteButton);
+
+        const score = document.createElement('div');
+        score.className = 'archive-score';
+        [[record.teamOne, record.scoreOne], [record.teamTwo, record.scoreTwo]].forEach(([team, points]) => {
+          const row = document.createElement('p');
+          const teamName = document.createElement('strong');
+          teamName.textContent = team;
+          const scoreValue = document.createElement('span');
+          scoreValue.textContent = formatNumber(points) + ' pontos';
+          row.append(teamName, scoreValue);
+          score.appendChild(row);
+        });
+
+        const details = document.createElement('div');
+        details.className = 'archive-details';
+        const winner = document.createElement('p');
+        winner.textContent = 'Vencedora: ' + record.winnerName;
+        const meta = document.createElement('p');
+        meta.textContent = 'Meta: ' + formatNumber(record.target) + ' pontos';
+        const rounds = document.createElement('p');
+        rounds.textContent = record.rounds === 1 ? '1 rodada' : record.rounds + ' rodadas';
+        details.append(winner, meta, rounds);
+
+        card.append(head, score, details);
+        list.appendChild(card);
+      });
+    }
+
+    function renderGame() {
+      const totals = recalculate();
+      setupScreen.hidden = true;
+      gameScreen.hidden = false;
+      renderHeader(totals);
+      renderScores(totals);
+      renderVictory(totals);
+      renderHistory();
+    }
+
+    function showSetup() {
+      game = null;
+      gameScreen.hidden = true;
+      setupScreen.hidden = false;
+      setupForm.reset();
+      $('#custom-game-field').hidden = true;
+      ['custom-game', 'team-one', 'team-two', 'target-score'].forEach((id) => setError(id, ''));
+      $('#game-type').focus();
+    }
+
+    function clearSavedGame() {
+      try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* A partida ainda pode ser reiniciada em memória. */ }
+      showSetup();
+    }
+
+    $('#game-type').addEventListener('change', () => {
+      const customSelected = $('#game-type').value === 'Outro';
+      $('#custom-game-field').hidden = !customSelected;
+      setError('custom-game', '');
+      if (customSelected) $('#custom-game').focus();
+    });
+
+    setupForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = validateSetup();
+      if (!data) {
+        setupForm.querySelector('[aria-invalid="true"]')?.focus();
+        return;
+      }
+
+      game = {
+        id: createGameId(),
+        gameType: data.gameType,
+        teamOne: data.teamOne,
+        teamTwo: data.teamTwo,
+        target: data.target,
+        rounds: [],
+        totals: { one: 0, two: 0 },
+        winner: null,
+        status: 'active',
+        endedAt: null,
+        resultDismissed: false,
+        historySaved: false
+      };
+      saveGame();
+      renderGame();
+      resetRoundFields();
+    });
+
+    ['round-one', 'round-two'].forEach((id) => {
+      $('#' + id).addEventListener('input', () => {
+        setError(id, '');
+        updateFinishButton();
+      });
+    });
+
+    roundForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const values = validateRoundInputs('round-one', 'round-two');
+      if (!values) {
+        roundForm.querySelector('[aria-invalid="true"]')?.focus();
+        return;
+      }
+      if (!validateSafeRoundTotals(values, 'round-one', 'round-two')) {
+        roundForm.querySelector('[aria-invalid="true"]')?.focus();
+        return;
+      }
+
+      game.rounds.push(values);
+      recalculate();
+      saveGame();
+      renderGame();
+      if (!game.winner) resetRoundFields();
+      showToast('Rodada ' + game.rounds.length + ' registrada.');
+    });
+
+    $('#undo-round').addEventListener('click', () => {
+      if (!game.rounds.length) return;
+      const removedRound = game.rounds.length;
+      game.rounds.pop();
+      recalculate();
+      saveGame();
+      renderGame();
+      showToast('Rodada ' + removedRound + ' desfeita.');
+    });
+
+    $('#history-body').addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      const index = Number(button.dataset.index);
+      if (!Number.isInteger(index) || !game.rounds[index]) return;
+
+      if (button.dataset.action === 'delete') {
+        if (!confirm('Excluir a rodada ' + (index + 1) + '? O placar será recalculado.')) return;
+        game.rounds.splice(index, 1);
+        recalculate();
+        saveGame();
+        renderGame();
+        showToast('Rodada excluída e placar recalculado.');
+        return;
+      }
+
+      editingRoundIndex = index;
+      $('#edit-subtitle').textContent = 'Altere os pontos da rodada ' + (index + 1) + '.';
+      $('#edit-one-label').textContent = game.teamOne;
+      $('#edit-two-label').textContent = game.teamTwo;
+      $('#edit-one').value = game.rounds[index].one;
+      $('#edit-two').value = game.rounds[index].two;
+      setError('edit-one', '');
+      setError('edit-two', '');
+      editDialog.showModal();
+      $('#edit-one').focus();
+      $('#edit-one').select();
+    });
+
+    $('#cancel-edit').addEventListener('click', () => {
+      editingRoundIndex = null;
+      editDialog.close();
+    });
+
+    editDialog.addEventListener('cancel', () => { editingRoundIndex = null; });
+
+    $('#edit-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const values = validateRoundInputs('edit-one', 'edit-two');
+      if (!values) {
+        $('#edit-form').querySelector('[aria-invalid="true"]')?.focus();
+        return;
+      }
+      if (editingRoundIndex === null || !game.rounds[editingRoundIndex]) return;
+      if (!validateSafeRoundTotals(values, 'edit-one', 'edit-two', editingRoundIndex)) {
+        $('#edit-form').querySelector('[aria-invalid="true"]')?.focus();
+        return;
+      }
+
+      const roundNumber = editingRoundIndex + 1;
+      game.rounds[editingRoundIndex] = values;
+      editingRoundIndex = null;
+      editDialog.close();
+      recalculate();
+      saveGame();
+      renderGame();
+      showToast('Rodada ' + roundNumber + ' atualizada.');
+    });
+
+    $('#save-to-game-history').addEventListener('click', saveCurrentGameToHistory);
+
+    $('#finish-without-saving').addEventListener('click', () => {
+      const confirmed = confirm('Esta partida não será adicionada ao histórico. Deseja continuar?');
+      if (confirmed) clearSavedGame();
+    });
+
+    $('#continue-viewing').addEventListener('click', () => {
+      if (!game || !game.winner) return;
+      game.resultDismissed = true;
+      saveGame();
+      renderGame();
+    });
+
+    $('#reopen-result').addEventListener('click', () => {
+      if (!game || !game.winner) return;
+      game.resultDismissed = false;
+      saveGame();
+      renderGame();
+    });
+
+    document.querySelectorAll('.open-game-history').forEach((button) => {
+      button.addEventListener('click', () => {
+        renderGameHistory();
+        gameHistoryDialog.showModal();
+      });
+    });
+
+    $('#close-game-history').addEventListener('click', () => gameHistoryDialog.close());
+
+    $('#game-history-list').addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-history-id]');
+      if (!button) return;
+      const confirmed = confirm('Deseja excluir esta partida do histórico? Esta ação não poderá ser desfeita.');
+      if (!confirmed) return;
+      const updatedHistory = loadGameHistory().filter((record) => record.id !== button.dataset.historyId);
+      if (storeGameHistory(updatedHistory)) renderGameHistory();
+    });
+
+    $('#clear-game-history').addEventListener('click', () => {
+      const confirmed = confirm('Deseja apagar permanentemente todas as partidas do histórico?');
+      if (!confirmed) return;
+      try {
+        localStorage.removeItem(HISTORY_KEY);
+        renderGameHistory();
+      } catch (error) {
+        showToast('Não foi possível apagar o histórico neste navegador.');
+      }
+    });
+
+    $('#clear-game').addEventListener('click', () => {
+      if (confirm('Apagar esta partida e iniciar um novo jogo? Esta ação não pode ser desfeita.')) clearSavedGame();
+    });
+
+    $('#new-game-winner').addEventListener('click', () => {
+      if (confirm('Iniciar uma nova partida? O placar atual será apagado.')) clearSavedGame();
+    });
+
+    // Inicialização: prioriza uma partida válida já salva neste navegador.
+    if (restoreGame()) {
+      renderGame();
+    } else {
+      showSetup();
+    }
+  </script>
+</body>
+</html>
